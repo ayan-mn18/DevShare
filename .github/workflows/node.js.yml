@@ -30,4 +30,4 @@ jobs:
     - run: | 
           touch .env
           echo "${{ secrets.DEVSHARE_PROD }}" > .env
-    - run: rpm run server:dev
+    - run: npm run server:dev
