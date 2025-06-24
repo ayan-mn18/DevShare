@@ -22,8 +22,7 @@ const port = process.env.PORT || 3003;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: "*",
-  credentials: true,
+  origin: "*"
 }))
 app.use(express.json());
 app.use(morgan('dev'));
