@@ -21,7 +21,9 @@ const port = process.env.PORT || 3003;
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: "https://devshare.ayanmn18.live/"
+}))
 app.use(express.json());
 app.use(morgan('dev'));
 
