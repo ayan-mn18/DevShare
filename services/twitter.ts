@@ -223,7 +223,7 @@ export async function postTweet(botId: string, content: string) {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    data: { text: "Smile Its Sunnah" },
+    data: { text: content },
     timeout: 15000 // 15 second timeout
   });
 
