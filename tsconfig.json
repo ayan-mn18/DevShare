@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "module": "ESNext",       // or "ES2020"
-    "target": "ES2017",
+    "target": "es2016",
+    "module": "commonjs",
+    "rootDir": "./",
     "outDir": "./dist",
-    "rootDir": ".",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,  
     "strict": true,
     "skipLibCheck": true
-  },
-  "include": ["*.ts"]
+  }
 }
