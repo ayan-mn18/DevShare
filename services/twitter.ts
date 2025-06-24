@@ -433,6 +433,7 @@ export async function addTweetBotToQueue(userId: string, botId: string) {
         { userId, botId },
         { 
           repeat: { 
+            // @ts-ignore
             cron: '0 0 * * *', // Every day at midnight
             tz: 'Asia/Kolkata'  // IST timezone
           }

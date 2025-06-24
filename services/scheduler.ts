@@ -52,6 +52,7 @@ export async function processTweetSchedule(job: Job<TweetJobData>) {
 
     return { success: true };
   } catch (error) {
+    // @ts-ignore
     console.error('Tweet scheduling failed:', error.message);
     throw error;
   }

@@ -147,9 +147,9 @@ export async function getLeetCodeMetrics(username: string): Promise<LeetCodeMetr
     }
 
     let totalSolved = userData.submitStats.acSubmissionNum
-      .reduce((total, item) => total + item.count, 0);
+      .reduce((total: any, item: any) => total + item.count, 0);
     let totalQuestions = allQuestionsCount
-      .reduce((total, item) => total + item.count, 0);
+      .reduce((total: any, item: any) => total + item.count, 0);
 
 
     
@@ -159,8 +159,8 @@ export async function getLeetCodeMetrics(username: string): Promise<LeetCodeMetr
       totalQuestions: totalQuestions / 2,
       streak,
       recentSubmissions: recentSubmissions
-        .filter(sub => sub.statusDisplay === 'Accepted')
-        .map(sub => ({
+        .filter((sub: any) => sub.statusDisplay === 'Accepted')
+        .map((sub: any) => ({
           title: sub.title,
           difficulty: 'Medium', // API doesn't return difficulty for submissions
           timestamp: new Date(sub.timestamp * 1000).toISOString()
@@ -170,7 +170,8 @@ export async function getLeetCodeMetrics(username: string): Promise<LeetCodeMetr
     };
   } catch (error) {
     if (error instanceof ApiError) throw error;
-    console.error('Error fetching LeetCode metrics:', error.response?.data || error.message);
+    // @ts-ignore
+    console.error('Error fetching LeetCode metrics:', error?.response?.data || error?.message);
     throw new ApiError(500, 'Failed to fetch LeetCode metrics');
   
   }

@@ -290,6 +290,7 @@ router.post('/test-queue-logic', async (req, res) => {
       { userId, botId },
       { 
         repeat: { 
+          // @ts-ignore
           cron: '0 0 * * *', // Every day at midnight
           tz: 'Asia/Kolkata'  // IST timezone
         }
