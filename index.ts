@@ -23,7 +23,7 @@ const port = process.env.PORT || 3003;
 app.use(helmet());
 app.use(
 		cors({
-			origin: 'https://api.devshare.ayanmn18.live/', // Allow frontend urls
+			origin: 'https://devshare.ayanmn18.live', // Allow frontend urls
 			credentials: true, // Required for cookies/auth headers
 			methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 			allowedHeaders: ['Content-Type', 'Authorization'],
