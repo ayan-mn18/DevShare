@@ -21,9 +21,14 @@ const port = process.env.PORT || 3003;
 
 // Middleware
 app.use(helmet());
-app.use(cors({
-  origin: "*"
-}))
+app.use(
+		cors({
+			origin: 'https://api.devshare.ayanmn18.live/', // Allow frontend urls
+			credentials: true, // Required for cookies/auth headers
+			methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+			allowedHeaders: ['Content-Type', 'Authorization'],
+		})
+	);
 app.use(express.json());
 app.use(morgan('dev'));
 
