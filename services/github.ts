@@ -17,7 +17,7 @@ export async function validateGithubUsername(username: string): Promise<boolean>
   }
 }
 
-export async function getGithubMetrics(username: string): Promise<GithubMetrics> {
+export async function getGithubMetrics(username: string, worker: boolean): Promise<GithubMetrics> {
   try {
     const query = `
 query($userName:String!) {
@@ -62,7 +62,14 @@ const variables = `
   allDays.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   // Get the last 12 days (most recent)
-  const last12Days = allDays.slice(0, 12); // reverse to get chronological order
+  let last12Days = []; // reverse to get chronological order
+
+  if(worker) {
+    // Reverse to get chronological order if this is for worker
+    last12Days = allDays.slice(1, 13);
+  } else {
+    last12Days = allDays.slice(0, 12);
+  }
 
   console.log('Response of github metrics:', JSON.stringify(last12Days, null, 2));
 

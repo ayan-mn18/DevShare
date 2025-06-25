@@ -65,7 +65,7 @@ app.post('/get-gh-metrics', async (req, res) => {
     }
     
     // Assuming you have a function to get GitHub metrics
-    const metrics = await getGithubMetrics(username);
+    const metrics = await getGithubMetrics(username, false);
     res.json(metrics);
   } catch (error) {
     console.error('Error fetching GitHub metrics:', error);

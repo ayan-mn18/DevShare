@@ -31,7 +31,7 @@ router.get('/:userId', async (req, res) => {
 
     try {
       if (user.github_username) {
-        githubMetrics = await getGithubMetrics(user.github_username);
+        githubMetrics = await getGithubMetrics(user.github_username, false);
       }
     } catch (githubError) {
       console.error('Error fetching GitHub metrics:', githubError);
