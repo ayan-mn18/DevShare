@@ -14,6 +14,8 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 import { tweetQueue } from './lib/queue';
 import { getGithubMetrics } from './services/github';
+import { generateTweetContent } from './services/scheduler';
+import { getLeetCodeMetrics } from './services/leetcode';
 
 config();
 
@@ -57,19 +59,39 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
 });
 
 app.use('/admin/queues', serverAdapter.getRouter());
-app.post('/get-gh-metrics', async (req, res) => {
+app.post('/test-ai-tweet', async (req, res) => {
   try {
-    const { username } = req.body;
-    if (!username) {
-      return res.status(400).json({ error: 'Username is required' });
+    const { ghUsername, lcUsername } = req.body;
+
+    if (!ghUsername || !lcUsername) {
+      return res.status(400).json({
+        status: 'ERROR',
+        message: 'GitHub and LeetCode usernames are required',
+        data: null,
+      });
     }
     
-    // Assuming you have a function to get GitHub metrics
-    const metrics = await getGithubMetrics(username, false);
-    res.json(metrics);
+    // Fetch GitHub metrics
+    const githubMetrics = await getGithubMetrics(ghUsername, false);
+    const leetCodeMetrics = await getLeetCodeMetrics(lcUsername);
+
+    // Create a test tweet
+    const tweetContent = await generateTweetContent(githubMetrics, leetCodeMetrics);
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Test tweet generated successfully',
+      data: {
+        tweetContent
+      }
+    });
   } catch (error) {
-    console.error('Error fetching GitHub metrics:', error);
-    res.status(500).json({ error: 'Failed to fetch GitHub metrics' });
+    console.error('Error generating test tweet:', error);
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Failed to generate test tweet',
+      data: null
+    });
   }
 });
 
