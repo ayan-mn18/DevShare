@@ -26,7 +26,7 @@ export async function processTweetSchedule(job: Job<TweetJobData>) {
 
     // Fetch metrics
     const [githubMetrics, leetcodeMetrics] = await Promise.all([
-      user.github_username ? getGithubMetrics(user.github_username) : null,
+      user.github_username ? getGithubMetrics(user.github_username, true) : null,
       user.leetcode_username ? getLeetCodeMetrics(user.leetcode_username) : null
     ]);
 
