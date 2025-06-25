@@ -13,6 +13,7 @@ import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
 import { tweetQueue } from './lib/queue';
+import { getGithubMetrics } from './services/github';
 
 config();
 
@@ -56,6 +57,26 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
 });
 
 app.use('/admin/queues', serverAdapter.getRouter());
+app.post('/get-gh-metrics', async (req, res) => {
+  try {
+    const { username } = req.body;
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+    
+    // Assuming you have a function to get GitHub metrics
+    const metrics = await getGithubMetrics(username);
+    res.json(metrics);
+  } catch (error) {
+    console.error('Error fetching GitHub metrics:', error);
+    res.status(500).json({ error: 'Failed to fetch GitHub metrics' });
+  }
+});
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
 
 // Start server
 const startServer = async () => {
