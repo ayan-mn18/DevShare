@@ -62,7 +62,7 @@ const variables = `
   allDays.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   // Get the last 12 days (most recent)
-  const last12Days = allDays.slice(0, 12).reverse(); // reverse to get chronological order
+  const last12Days = allDays.slice(0, 12); // reverse to get chronological order
 
   console.log('Response of github metrics:', JSON.stringify(last12Days, null, 2));
 

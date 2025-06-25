@@ -44,7 +44,8 @@ router.get('/:userId', async (req, res) => {
       .from('tweets')
       .select('*')
       .eq('bot_id', bot.id)
-      .order('schedule_time', { ascending: true });
+      .order('schedule_time', { ascending: true })
+      .limit(3);
 
     if (tweetsError) {
       return res.status(500).json({
