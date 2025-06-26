@@ -27,7 +27,7 @@ export const errorHandler = (
     });
   }
 
-  res.status(500).json({
+  return res.status(500).json({
     status: 'FAILURE',
     message: 'Internal server error',
     data: null
