@@ -66,10 +66,10 @@ router.post('/x/callback', async (req, res) => {
       data: result
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw new ApiError(400, 'Invalid request parameters');
-    }
-    throw error;
+
+      throw new ApiError(400, JSON.stringify(error) || 'Failed to handle callback');
+
+    // throw error;
   }
 });
 
