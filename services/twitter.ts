@@ -17,6 +17,7 @@ interface TwitterUser {
   id: string;
   username: string;
   name: string;
+  profile_image_url: string;
 }
 
 // Store state parameters temporarily (in production, use Redis)
@@ -108,6 +109,7 @@ export async function handleCallback(code: string, state: string, codeVerifier: 
       .update({
         name: twitterUser.name,
         twitter_username: twitterUser.username,
+        avatar: twitterUser.profile_image_url,
         updated_at: new Date()
       })
       .eq('id', existingUser.id)
@@ -339,7 +341,7 @@ async function exchangeCodeForTokens(code: string, codeVerifier: string): Promis
 }
 
 async function getTwitterUser(accessToken: string): Promise<TwitterUser> {
-  const response = await fetch(`${TWITTER_API_URL}/users/me`, {
+  const response = await fetch(`${TWITTER_API_URL}/users/me?user.fields=profile_image_url`, {
     headers: {
       'Authorization': `Bearer ${accessToken}`
     }
