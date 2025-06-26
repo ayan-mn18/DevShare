@@ -67,6 +67,9 @@ export async function handleCallback(code: string, state: string, codeVerifier: 
 
   const tokens = await exchangeCodeForTokens(code, codeVerifier);
   const twitterUser = await getTwitterUser(tokens.access_token);
+  if (!twitterUser || !twitterUser.username) {
+    throw new ApiError(500, 'Failed to get Twitter user info');
+  }
 
   console.log('Twitter user:', twitterUser);
 

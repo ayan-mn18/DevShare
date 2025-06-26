@@ -38,7 +38,7 @@ router.post('/x', async (req, res) => {
 });
 
 // Handle X (Twitter) OAuth callback
-router.post('/x/callback', async (req, res) => {
+router.post('/x/callback', async (req, res, next) => {
   try {
 
     const { code, state, codeVerifier } = req.body;
@@ -66,10 +66,8 @@ router.post('/x/callback', async (req, res) => {
       data: result
     });
   } catch (error) {
-
-      throw new ApiError(400, JSON.stringify(error) || 'Failed to handle callback');
-
-    // throw error;
+    console.error('Error in X callback:', error);
+    next(error)
   }
 });
 

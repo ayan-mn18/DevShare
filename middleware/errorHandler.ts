@@ -17,7 +17,7 @@ export const errorHandler = (
   res: Response<ApiResponse>,
   next: NextFunction
 ) => {
-  console.error(err);
+  console.error("errorHandler:", err);
 
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
@@ -26,6 +26,7 @@ export const errorHandler = (
       data: null
     });
   }
+
 
   return res.status(500).json({
     status: 'FAILURE',
