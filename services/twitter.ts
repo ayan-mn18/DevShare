@@ -346,8 +346,9 @@ async function getTwitterUser(accessToken: string): Promise<TwitterUser> {
   });
 
   if (!response.ok) {
-    console.error("response:", response);
-    // throw new ApiError(500, 'Failed to get Twitter user info');
+    console.error("Twitter error:", response);
+    console.error("Twitter error details:", await response.json().then(data => data));
+    throw new ApiError(500, 'Failed to get Twitter user info');
   }
 
   const { data } = await response.json();
