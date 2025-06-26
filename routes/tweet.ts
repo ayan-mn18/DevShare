@@ -179,6 +179,7 @@ router.post('/schedule', async (req, res) => {
     }
 
     const { userId, botId } = parseResult.data;
+    console.log('Parsed data:', { userId, botId });
 
     // Verify user exists
     const { data: user, error: userError } = await supabase
