@@ -44,7 +44,7 @@ router.get('/:userId', async (req, res) => {
       .from('tweets')
       .select('*')
       .eq('bot_id', bot.id)
-      .order('schedule_time', { ascending: true })
+      .order('schedule_time', { ascending: false })
       .limit(3);
 
     if (tweetsError) {
@@ -315,3 +315,90 @@ router.post('/test-queue-logic', async (req, res) => {
   }
 }
 );
+
+// an api which take in { botId, time, timezone } and update the bot's schedule time and timezone
+router.post('/update-schedule', async (req, res) => {
+  try {
+    const schema = z.object({
+      botId: z.string().uuid(),
+      time: z.string(), // HH:mm format
+    });
+
+    const parseResult = schema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({
+        status: 'ERROR',
+        message: 'Invalid request parameters',
+        data: parseResult.error.format()
+      });
+    }
+
+    const { botId, time } = parseResult.data;
+
+    // Verify bot exists
+    const { data: bot, error: botError } = await supabase
+      .from('bots')
+      .select('id, user_id')
+      .eq('id', botId)
+      .single();
+
+    if (botError || !bot) {
+      return res.status(404).json({
+        status: 'ERROR',
+        message: 'Bot not found',
+        data: null
+      });
+    }
+
+    // Update bot's trigger time and timezone
+    const { error: updateError } = await supabase
+      .from('bots')
+      .update({ trigger_time: time })
+      .eq('id', botId);
+
+    if (updateError) {
+      return res.status(500).json({
+        status: 'ERROR',
+        message: 'Failed to update schedule',
+        data: null
+      });
+    }
+
+    // remove existing repeatable job if it exists
+    const existingJobs = await tweetQueue.getRepeatableJobs();
+    const jobExists = existingJobs.find(job => job.name === `DailyUpdate-${bot.user_id}`);
+    if (jobExists) {
+      await tweetQueue.removeRepeatable('daily-update', {
+        key: jobExists.key,
+      });
+      console.log('Removed existing job:', jobExists.key);
+    }
+    // then add a new repeatable job with the updated time and timezone
+    const [hour, minute] = time.split(':');
+    console.log('Adding new job with cron:', ` 0 ${parseInt(minute)} ${parseInt(hour)} * * *`);
+    await tweetQueue.add(
+      `DailyUpdate-${bot.user_id}`,
+      { userId: bot.user_id, botId },
+      {
+        repeat: {
+          // @ts-ignore
+          cron: `0 ${parseInt(minute)} ${parseInt(hour)} * * *`,
+          tz: 'Asia/Kolkata' // Change this to the desired timezone
+        }
+      }
+    );
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Schedule updated successfully',
+      data: null
+    });
+  } catch (error) {
+    console.error('Error updating schedule:', error);
+    return res.status(500).json({
+      status: 'ERROR',
+      message: 'An unexpected error occurred',
+      data: null
+    });
+  }
+});

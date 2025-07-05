@@ -26,6 +26,21 @@ router.get('/:userId', async (req, res) => {
       });
     }
 
+    // get user's bot
+    let { data: bot, error: botError } = await supabase
+      .from('bots')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (botError || !bot) {
+      return res.status(404).json({
+        status: 'ERROR',
+        message: 'Bot not found',
+        data: null
+      });
+    }
+
     let githubMetrics;
     let leetCodeMetrics;
 
@@ -52,6 +67,8 @@ router.get('/:userId', async (req, res) => {
       message: 'Dashboard data fetched successfully',
       data: {
         user,
+        time: bot.trigger_time,
+        botId: bot.id,
         githubMetrics: githubMetrics || {
           contributions: [],
           totalCommits: 0,
