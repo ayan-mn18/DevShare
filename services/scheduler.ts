@@ -10,6 +10,8 @@ interface TweetJobData {
   botId: string;
 }
 
+const NO_PROGRESS = "No Progress";
+
 export async function processTweetSchedule(job: Job<TweetJobData>) {
   const { userId, botId } = job.data;
 
@@ -33,6 +35,11 @@ export async function processTweetSchedule(job: Job<TweetJobData>) {
 
     // Generate tweet content
     const content = await generateTweetContent(githubMetrics, leetcodeMetrics);
+
+    if (content === NO_PROGRESS) {
+      console.log('No progress to tweet.');
+      return { success: true };
+    }
 
     console.log('Generated tweet content:', content);
 
@@ -100,6 +107,65 @@ export async function processTweetSchedule(job: Job<TweetJobData>) {
 //   return parts.join('\n') + '\n\n#coding #developer #100DaysOfCode';
 // }
 
+const tones = [
+  "funny",
+  "motivational",
+  "sarcastic",
+  "chill",
+  "developerProTip",
+  "hype",
+  "nerdy",
+  "poetic",
+  "dramatic",
+  "spicy",
+  "honest",
+  "lateNightThoughts",
+  "memeStyle"
+];
+
+const hashtagsPool = [
+  "#100DaysOfCode",
+  "#buildinpublic",
+  "#devlife",
+  "#TechTwitter",
+  "#javascript",
+  "#typescript",
+  "#reactjs",
+  "#nodejs",
+  "#coding",
+  "#developer",
+  "#opensource",
+  "#CleanCode",
+  "#leetcode",
+  "#bugfixes",
+  "#programming",
+  "#codingLife",
+  "#programmingHumor",
+  "#webdev",
+  "#productivity",
+  "#indiehackers",
+  "#shipit",
+  "#sideproject",
+  "#remotework",
+  "#debugging",
+  "#frontend",
+  "#backend",
+  "#softwareengineering",
+  "#codeNewbie",
+  "#commitment",
+  "#learningInPublic",
+  "#AI",
+  "#automation",
+  "#devmemes",
+  "#todayilearned",
+  "#github"
+];
+
+function getRandomSubset<T>(arr: T[], count: number): T[] {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
 export async function generateTweetContent(
   githubMetrics: Awaited<ReturnType<typeof getGithubMetrics>> | null,
   leetcodeMetrics: Awaited<ReturnType<typeof getLeetCodeMetrics>> | null
@@ -126,28 +192,47 @@ export async function generateTweetContent(
   }
 
   if (facts.length === 0) {
-    facts.push("I spent today learning and growing as a developer.");
+    return NO_PROGRESS;
   }
 
+  const tone = tones[Math.floor(Math.random() * tones.length)];
+  const hashtags = getRandomSubset(hashtagsPool, Math.floor(Math.random() * 4) + 2).join(" ");
+
   const prompt = `
-You're an energetic developer who shares daily progress on Twitter in a casual, fun, and motivating way. Based on the data below, write a tweet (max 280 characters) that celebrates your day:
+You are a developer sharing your coding progress on Twitter in a way that grabs attention, entertains, or inspires.
 
 Facts:
-${facts.map(f => `- ${f}`).join('\n')}
+${facts.map((f) => `- ${f}`).join('\n')}
 
-Include emojis and hashtags like #100DaysOfCode, #developer, #coding if relevant.
+Instructions:
+- Write a tweet under 280 characters
+- Style: ${tone}
+- Make it original and interesting, not generic or templated
+- Use emojis naturally if needed
+- Include these hashtags at the end: ${hashtags}
+- Try humor, analogies, drama, poetic flair, developer memes, or pro tips — based on the tone
+
+Examples:
+- "Only 2 commits today but they were spicy 🌶️🔥 Cleaned up legacy code that looked like ancient hieroglyphs. #buildinpublic #CleanCode #devlife"
+- "Leetcode hit me with 4 medium problems. I hit back with ACs. It’s a war out here 💣🧠 #leetcode #programming #shipit"
+- "No commits today, but I refactored my mindset. Growth doesn’t always mean output 🚀 #100DaysOfCode #developer #lateNightThoughts"
+- "Code didn't compile. Cried a little. Fixed a semicolon. I'm back baby 😤💻 #devmemes #javascript #debugging"
 `;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4", // or gpt-3.5-turbo
     messages: [
-      { role: "system", content: "You are a tweet writer for a software developer sharing daily achievements." },
+      { role: "system", content: "You are a creative tweet generator for a quirky developer sharing daily progress." },
       { role: "user", content: prompt }
     ],
-    temperature: 0.9, // Creative output
-    max_tokens: 100,
+    temperature: 0.95,
+    max_tokens: 120,
   });
 
-  const tweet = response.choices[0].message.content?.trim();
-  return tweet || "Another productive day! 💻🚀 #100DaysOfCode";
+  const rawTweet = response.choices[0].message.content?.trim() || "";
+  const cleanedTweet = rawTweet.replace(/^["']|["']$/g, ""); // removes surrounding quotes if present
+
+  return cleanedTweet || "Wrote code. Broke things. Fixed them. Shipped. #devlife #buildinpublic";
 }
+
+
