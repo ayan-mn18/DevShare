@@ -100,6 +100,34 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' });
 });
 
+// get leetcode metrics
+app.post('/generateContent', async (req, res) => {
+  const { lcUsername, ghUsername } = req.body;
+  try {
+    const lcMetrics = await getLeetCodeMetrics(lcUsername); 
+    const ghMetrics = await getGithubMetrics(ghUsername, false);
+    
+    const content = await generateTweetContent(ghMetrics, lcMetrics);
+
+    res.status(200).json({
+      status: 'SUCCESS',
+      message: 'LeetCode metrics fetched successfully',
+      data: {
+        leetCodeMetrics: lcMetrics,
+        githubMetrics: ghMetrics,
+        content
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching LeetCode metrics:', error); 
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Failed to fetch LeetCode metrics',
+      data: null
+    });
+  }
+});
+
 // Start server
 const startServer = async () => {
   try {

@@ -33,6 +33,8 @@ export async function processTweetSchedule(job: Job<TweetJobData>) {
       user.leetcode_username ? getLeetCodeMetrics(user.leetcode_username) : null
     ]);
 
+
+
     // Generate tweet content
     const content = await generateTweetContent(githubMetrics, leetcodeMetrics);
 
@@ -174,7 +176,9 @@ export async function generateTweetContent(
 
   if (githubMetrics) {
     const count = githubMetrics.contributions[0].count;
-    facts.push(`GitHub contributions today: ${count}`);
+    if (count > 0) {
+          facts.push(`GitHub contributions today: ${count}`);
+    }  
   }
 
   if (leetcodeMetrics) {
@@ -190,6 +194,8 @@ export async function generateTweetContent(
       facts.push(`Current LeetCode streak: ${leetcodeMetrics.streak} days`);
     }
   }
+
+  console.log('Generated facts:', facts); 
 
   if (facts.length === 0) {
     return NO_PROGRESS;
