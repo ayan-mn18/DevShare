@@ -1,0 +1,314 @@
+<!-- services/email/templates/marketingEmail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevShare - Automate Your Coding Journey</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #15202B;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #FFFFFF;
+        }
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 50px 0;
+            background: linear-gradient(135deg, #1DA1F2 0%, #0B7EC8 100%);
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 2px, transparent 2px),
+                        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.08) 1px, transparent 1px),
+                        radial-gradient(circle at 60% 20%, rgba(255,255,255,0.05) 3px, transparent 3px);
+            background-size: 80px 80px, 60px 60px, 100px 100px;
+        }
+        .logo {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: #FFFFFF;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -2px;
+        }
+        .header-subtitle {
+            color: #E8F5FE;
+            font-size: 20px;
+            font-weight: 500;
+            margin: 0 0 15px 0;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+        .hero-text {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+        .content {
+            background-color: #192734;
+            padding: 60px 50px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+        .greeting {
+            color: #1DA1F2;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: -0.3px;
+        }
+        .section-divider {
+            background: linear-gradient(135deg, rgba(224, 36, 94, 0.15) 0%, rgba(224, 36, 94, 0.05) 100%);
+            border: 2px solid rgba(224, 36, 94, 0.3);
+            border-radius: 16px;
+            padding: 35px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        .section-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        .section-text {
+            font-size: 18px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+        .feature-card {
+            background: linear-gradient(135deg, #253341 0%, #2A3A4A 100%);
+            border: 1px solid #38444D;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: #1DA1F2;
+            box-shadow: 0 20px 40px rgba(29, 161, 242, 0.2);
+        }
+        .feature-icon {
+            font-size: 52px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .feature-title {
+            color: #FFFFFF;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            letter-spacing: -0.3px;
+        }
+        .feature-description {
+            color: #8899A6;
+            font-size: 15px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        .cta-section {
+            text-align: center;
+            margin: 60px 0;
+            padding: 50px;
+            background: linear-gradient(135deg, #1C2732 0%, #253341 100%);
+            border-radius: 16px;
+            border: 2px solid #38444D;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .cta-title {
+            color: #FFFFFF;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -0.8px;
+        }
+        .cta-subtitle {
+            color: #8899A6;
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1DA1F2 0%, #0B7EC8 100%);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 20px 50px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(29, 161, 242, 0.4);
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(29, 161, 242, 0.5);
+        }
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.3px;
+        }
+        p {
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+        .footer {
+            text-align: center;
+            padding: 50px 0;
+            color: #657786;
+            font-size: 15px;
+            font-weight: 400;
+            border-top: 1px solid #38444D;
+            margin-top: 40px;
+        }
+        @media (max-width: 600px) {
+            .content {
+                padding: 40px 30px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .cta-title {
+                font-size: 26px;
+            }
+            .hero-text {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">DevShare</div>
+            <p class="header-subtitle">Automate Your Coding Journey</p>
+            <p class="hero-text">Turn Your Code Into Your Career Advantage</p>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                Hey {{userName}}! 👋
+            </div>
+            
+            <p style="color: #FFFFFF; font-size: 20px; margin-bottom: 35px; line-height: 1.7;">
+                Are you a developer who codes consistently but struggles to showcase your progress? 
+                You're not alone, and we've built the perfect solution for you.
+            </p>
+
+            <div class="section-divider" style="border-color: rgba(224, 36, 94, 0.4);">
+                <div class="section-title" style="color: #E0245E;">😤 The Developer Struggle is Real</div>
+                <div class="section-text" style="color: #8899A6;">
+                    You solve LeetCode problems daily, push code to GitHub, and build amazing projects... 
+                    but your achievements disappear into the void. Meanwhile, developers with less skill 
+                    but better self-promotion are getting all the opportunities.
+                    <br><br>
+                    <strong>Sound familiar?</strong>
+                </div>
+            </div>
+
+            <div class="section-divider" style="background: linear-gradient(135deg, rgba(23, 191, 99, 0.15) 0%, rgba(23, 191, 99, 0.05) 100%); border-color: rgba(23, 191, 99, 0.4);">
+                <div class="section-title" style="color: #17BF63;">✨ Meet DevShare - Your Automatic Hype Person</div>
+                <div class="section-text" style="color: #8899A6;">
+                    DevShare automatically transforms your daily coding activities into engaging social media content. 
+                    No more manual tweeting, no more forgotten achievements, no more invisible progress.
+                    <br><br>
+                    <strong style="color: #17BF63;">Code. Connect. Shine. Automatically.</strong>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <div class="feature-title">One-Click Setup</div>
+                    <div class="feature-description">
+                        Connect your X (Twitter), GitHub, and LeetCode accounts in under 2 minutes. 
+                        OAuth integration means it's secure and seamless.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI-Powered Content</div>
+                    <div class="feature-description">
+                        Our AI creates witty, engaging tweets about your coding progress. 
+                        From motivational to humorous - always authentic, never generic.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Progress Tracking</div>
+                    <div class="feature-description">
+                        Beautiful dashboard showing your coding metrics, streaks, and social media impact. 
+                        See your growth in real-time.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <div class="cta-title">Ready to Automate Your Success? 🚀</div>
+                <div class="cta-subtitle">
+                    Stop being the best-kept secret in tech. Let DevShare showcase your coding journey 
+                    and build the developer brand you deserve.
+                </div>
+                
+                <a href="https://devshare.ayanmn18.live" class="cta-button">
+                    Start Building Your Brand - It's Free!
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                Questions? Just reply to this email - we read every message!<br>
+                <a href="https://devshare.ayanmn18.live/unsubscribe">Unsubscribe</a> | 
+                <a href="https://devshare.ayanmn18.live/privacy">Privacy Policy</a>
+            </p>
+            <p style="margin-top: 30px; color: #657786;">
+                © 2025 DevShare. Made with ❤️ by developers, for developers.<br>
+                <em>Your coding journey deserves to be seen. Let us help you shine.</em> ✨
+            </p>
+        </div>
+    </div>
+</body>
+</html>

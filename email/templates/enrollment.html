@@ -1,0 +1,383 @@
+<!-- services/email/templates/enrollmentEmail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Enrollment Confirmed - DevShare</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #15202B;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #FFFFFF;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #1DA1F2 0%, #0B7EC8 100%);
+            border-radius: 16px 16px 0 0;
+            position: relative;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                        radial-gradient(circle at 70% 60%, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: #FFFFFF;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -1px;
+        }
+        .header-subtitle {
+            color: #E8F5FE;
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+        .content {
+            background-color: #192734;
+            padding: 50px 40px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        .success-icon {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .success-icon span {
+            display: inline-block;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #17BF63 0%, #0F9F4F 100%);
+            border-radius: 50%;
+            line-height: 70px;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(23, 191, 99, 0.3);
+        }
+        h1 {
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 25px 0;
+            letter-spacing: -0.5px;
+        }
+        .intro-text {
+            color: #8899A6;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+        .challenge-card {
+            background: linear-gradient(135deg, #253341 0%, #2A3A4A 100%);
+            border: 1px solid #38444D;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 5px solid #1DA1F2;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .challenge-title {
+            color: #1DA1F2;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            letter-spacing: -0.3px;
+        }
+        .challenge-description {
+            color: #8899A6;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        .challenge-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        .detail-item {
+            text-align: center;
+        }
+        .detail-label {
+            color: #657786;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .detail-value {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, rgba(255, 173, 31, 0.15) 0%, rgba(255, 173, 31, 0.05) 100%);
+            border: 2px solid #FFAD1F;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+        }
+        .warning-title {
+            color: #FFAD1F;
+            font-weight: 700;
+            font-size: 20px;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.3px;
+        }
+        .warning-title::before {
+            content: "⚠️";
+            margin-right: 12px;
+            font-size: 24px;
+        }
+        .warning-text {
+            color: #FFAD1F;
+            font-size: 15px;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+        .requirements {
+            background: linear-gradient(135deg, #1C2732 0%, #243038 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid #2C3640;
+        }
+        .requirements-title {
+            color: #FFFFFF;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            letter-spacing: -0.3px;
+        }
+        .requirement-item {
+            color: #8899A6;
+            margin: 12px 0;
+            display: flex;
+            align-items: flex-start;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .requirement-item::before {
+            content: "✓";
+            color: #17BF63;
+            font-weight: 700;
+            margin-right: 12px;
+            font-size: 16px;
+            margin-top: 2px;
+        }
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+            padding: 35px;
+            background: linear-gradient(135deg, #1C2732 0%, #253341 100%);
+            border-radius: 12px;
+            border: 1px solid #38444D;
+        }
+        .cta-text {
+            color: #8899A6;
+            margin-bottom: 25px;
+            font-size: 17px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1DA1F2 0%, #0B7EC8 100%);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(29, 161, 242, 0.3);
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(29, 161, 242, 0.4);
+        }
+        .info-section {
+            background: linear-gradient(135deg, #1C2732 0%, #243038 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 1px solid #2C3640;
+        }
+        .info-section h3 {
+            color: #FFFFFF;
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .info-section p {
+            margin: 12px 0;
+            color: #8899A6;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #657786;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .footer a {
+            color: #1DA1F2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .social-links {
+            margin: 25px 0;
+        }
+        .social-links a {
+            color: #1DA1F2;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .social-links a:hover {
+            color: #5DA9E6;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .content {
+                padding: 30px 25px;
+            }
+            .challenge-details {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .challenge-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">DevShare</div>
+            <p class="header-subtitle">Automate Your Coding Journey</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-icon">
+                <span>🚀</span>
+            </div>
+            
+            <h1>Challenge Enrollment Confirmed!</h1>
+            
+            <p class="intro-text">
+                Congratulations! You've successfully enrolled in your coding challenge. 
+                Your journey to consistency and growth starts now! 💪
+            </p>
+
+            <div class="challenge-card">
+                <div class="challenge-title">{{challengeTitle}}</div>
+                <div class="challenge-description">{{challengeDescription}}</div>
+                
+                <div class="challenge-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Duration</div>
+                        <div class="detail-value">{{duration}} Days</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Start Date</div>
+                        <div class="detail-value">{{formattedStartDate}}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">End Date</div>
+                        <div class="detail-value">{{formattedEndDate}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="requirements">
+                <div class="requirements-title">Daily Requirements</div>
+                {{requirementsList}}
+            </div>
+
+            {{warningSection}}
+
+            <div class="cta-section">
+                <div class="cta-text">
+                    Ready to start your challenge? Head to your dashboard to track your progress!
+                </div>
+                <a href="https://devshare.ayanmn18.live/dashboard" class="cta-button">
+                    View Dashboard
+                </a>
+            </div>
+
+            <div class="info-section">
+                <h3>What Happens Next?</h3>
+                <p>📊 Your progress will be automatically tracked daily</p>
+                <p>🐦 Success tweets will be posted to showcase your achievements</p>
+                <p>📧 You'll receive progress updates and reminders</p>
+                <p>🏆 Complete the challenge to earn bragging rights!</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="social-links">
+                <a href="https://twitter.com/ayanmn18">Twitter</a>
+                <a href="https://github.com/devshare">GitHub</a>
+                <a href="https://devshare.ayanmn18.live">Website</a>
+            </div>
+            <p>
+                This email was sent because you enrolled in a DevShare coding challenge.<br>
+                <a href="https://devshare.ayanmn18.live/unsubscribe">Unsubscribe</a> | 
+                <a href="https://devshare.ayanmn18.live/privacy">Privacy Policy</a>
+            </p>
+            <p style="margin-top: 25px; color: #657786;">
+                © 2025 DevShare. Made with ❤️ for developers who code consistently.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

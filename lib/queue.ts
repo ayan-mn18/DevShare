@@ -1,6 +1,6 @@
 import { Queue, Worker } from 'bullmq';
 import IORedis from 'ioredis';
-import { processTweetSchedule } from '../services/scheduler';
+import { processTweetSchedule, trackChallengesProgress } from '../services/scheduler';
 
 const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', {maxRetriesPerRequest: null});
 
@@ -51,3 +51,26 @@ export async function addJob(
       throw new Error(`Unknown job type: ${type}`);
   }
 }
+
+export interface ChallengeTweetJobData {
+  userId: string;
+  botId: string;
+  userChallengeId: string;
+  challengeTitle: string;
+}
+// create a new queue for challenges
+export const challengeQueue = new Queue<ChallengeTweetJobData>('challenges', { connection });
+
+export const initializeChallengesQueue = async () => {
+  const worker = new Worker('challenges', trackChallengesProgress, { connection });
+
+  worker.on('completed', job => {
+    console.log(`Job ${job.id} completed`);
+  });
+  
+  worker.on('failed', (job, err) => {
+    console.error(`Job ${job?.id} failed:`, err);
+  });
+
+  return { challengeQueue, worker };
+};

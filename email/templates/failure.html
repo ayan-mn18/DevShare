@@ -1,0 +1,119 @@
+<!-- services/email/templates/failureEmail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Failed - DevShare</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #15202B;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #FFFFFF;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background-color: #192734;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+        .header {
+            background: linear-gradient(135deg, #E0245E 0%, #C91E4A 100%);
+            padding: 35px;
+            text-align: center;
+        }
+        .header h2 {
+            margin: 0;
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .content {
+            padding: 40px 35px;
+            text-align: center;
+        }
+        .failure-icon {
+            font-size: 56px;
+            margin-bottom: 25px;
+        }
+        h3 {
+            color: #FFFFFF;
+            margin: 0 0 20px 0;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        p {
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        .main-text {
+            color: #8899A6;
+        }
+        .accountability-text {
+            color: #E0245E;
+            font-weight: 500;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #17BF63 0%, #0F9F4F 100%);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            margin: 25px 0;
+            box-shadow: 0 6px 20px rgba(23, 191, 99, 0.3);
+            transition: all 0.2s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(23, 191, 99, 0.4);
+        }
+        .footer-text {
+            color: #657786;
+            font-size: 14px;
+            margin-top: 35px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Challenge Failed</h2>
+        </div>
+        <div class="content">
+            <div class="failure-icon">💔</div>
+            <h3>Don't Give Up!</h3>
+            <p class="main-text">
+                Your challenge streak was broken, but every failure is a learning opportunity. 
+                The best developers bounce back stronger! 💪
+            </p>
+            <p class="accountability-text">
+                An accountability tweet has been posted to keep you honest. 
+                Time to start fresh and show what you're made of! 🔥
+            </p>
+            <a href="https://devshare.ayanmn18.live/dashboard" class="cta-button">
+                Start New Challenge
+            </a>
+            <p class="footer-text">
+                Failure is temporary, giving up is permanent.<br>
+                - The DevShare Team 🚀
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -5,10 +5,11 @@ import morgan from 'morgan';
 import { rateLimit } from 'express-rate-limit';
 import { config } from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
-import { initializeQueue } from './lib/queue';
+import { challengeQueue, initializeChallengesQueue, initializeQueue } from './lib/queue';
 import connectRoutes from './routes/connect';
 import tweetRoutes from './routes/tweet';
 import dashboardRoutes from './routes/dashboard';
+import challengeRoutes from './routes/challenges';
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
@@ -16,6 +17,8 @@ import { tweetQueue } from './lib/queue';
 import { getGithubMetrics } from './services/github';
 import { generateTweetContent } from './services/scheduler';
 import { getLeetCodeMetrics } from './services/leetcode';
+import { postTweet } from './services/twitter';
+import { sendChallengeFailureEmail, sendMarketingEmail, sendWelcomeSeriesEmail } from './services/email';
 
 config();
 
@@ -46,6 +49,7 @@ app.use(morgan('dev'));
 app.use('/api/v1/connect', connectRoutes);
 app.use('/api/v1/tweet', tweetRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/challenges', challengeRoutes); // Add challenge routes
 
 // Error handling
 app.use(errorHandler);
@@ -54,7 +58,7 @@ const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 
 const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
-  queues: [new BullMQAdapter(tweetQueue)],
+  queues: [new BullMQAdapter(tweetQueue), new BullMQAdapter(challengeQueue)],
   serverAdapter,
 });
 
@@ -128,11 +132,74 @@ app.post('/generateContent', async (req, res) => {
   }
 });
 
+// create an api whihc takes in botId & content and posts a tweet
+app.post('/postTweet', async (req, res) => {
+  const { botId, content } = req.body;
+  try {
+    if (!botId || !content) {
+      return res.status(400).json({
+        status: 'ERROR',      
+        message: 'Bot ID and content are required',
+        data: null
+      });
+    } 
+    const tweet = await postTweet(botId, content);
+    res.status(200).json({
+      status: 'SUCCESS',
+      message: 'Tweet posted successfully',
+      data: tweet
+    });
+  } catch (error) {
+    console.error('Error posting tweet:', error);
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Failed to post tweet',
+      data: null
+    });
+  }
+});
+
+
+// API endpoint example
+app.post('/api/v1/mail', async (req, res) => {
+  try {
+    const { email, type, userData } = req.body;
+    
+    let result;
+    switch (type) {
+      case 'marketing':
+        result = await sendMarketingEmail(email, userData);
+        break;
+      case 'welcome':
+        result = await sendWelcomeSeriesEmail(email, 1, userData);
+        break;
+      case 'challenge-failure':
+        result = await sendChallengeFailureEmail(email, userData);
+        break;
+      default:
+        throw new Error('Invalid email type');
+    }
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Marketing email sent successfully',
+      data: result
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: error.message,
+      data: null
+    });
+  }
+});
+
 // Start server
 const startServer = async () => {
   try {
     await initializeQueue();
-    
+    await initializeChallengesQueue();
+
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });

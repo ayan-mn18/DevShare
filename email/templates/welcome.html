@@ -1,0 +1,134 @@
+<!-- services/email/templates/welcomeEmail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to DevShare</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #15202B;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #FFFFFF;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #17BF63 0%, #0F9F4F 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            color: #FFFFFF;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .content {
+            background-color: #192734;
+            padding: 50px 40px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        h2 {
+            color: #17BF63;
+            margin: 0 0 25px 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        p {
+            color: #8899A6;
+            font-size: 18px;
+            line-height: 1.7;
+            font-weight: 400;
+            margin-bottom: 25px;
+        }
+        .steps-section {
+            background: linear-gradient(135deg, #1C2732 0%, #243038 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 35px 0;
+            border: 1px solid #2C3640;
+        }
+        .steps-section h3 {
+            color: #FFFFFF;
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .steps-section p {
+            margin: 15px 0;
+            color: #8899A6;
+            font-size: 16px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1DA1F2 0%, #0B7EC8 100%);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 18px 45px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 0.3px;
+            box-shadow: 0 6px 20px rgba(29, 161, 242, 0.3);
+            transition: all 0.2s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 161, 242, 0.4);
+        }
+        .footer-text {
+            color: #657786;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 35px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Welcome to DevShare!</h1>
+        </div>
+        <div class="content">
+            <h2>Hey {{userName}}, you're all set! 🚀</h2>
+            
+            <p>
+                Welcome to the community of developers who showcase their coding journey automatically! 
+                You're now part of an exclusive group that understands the power of consistent visibility.
+            </p>
+
+            <div class="steps-section">
+                <h3>🚀 What happens next?</h3>
+                <p>1️⃣ Connect your X, GitHub, and LeetCode accounts</p>
+                <p>2️⃣ Set your tweeting schedule (we recommend daily at midnight)</p>
+                <p>3️⃣ Watch your developer brand grow on autopilot!</p>
+            </div>
+
+            <div style="text-align: center; margin: 45px 0;">
+                <a href="https://devshare.ayanmn18.live/dashboard" class="cta-button">
+                    Complete Your Setup Now
+                </a>
+            </div>
+
+            <p class="footer-text">
+                Need help? Just reply to this email - we're here to support you! 💪
+            </p>
+        </div>
+    </div>
+</body>
+</html>

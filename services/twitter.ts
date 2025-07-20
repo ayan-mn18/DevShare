@@ -181,13 +181,25 @@ export async function postTweet(botId: string, content: string) {
   // get the bot's access token & refresh token from the database
   const { data: bot, error: botError } = await supabase
     .from('bots')
-    .select('access_token, refresh_token')
+    .select('user_id, access_token, refresh_token')
     .eq('id', botId)
     .single();
 
   if (botError || !bot?.access_token || !bot?.refresh_token) {
     throw new ApiError(404, 'Bot not found');
   }
+
+  // fetch the user from user_id and twitter username
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('twitter_username')
+    .eq('id', bot.user_id)
+    .single();
+
+  if (userError || !user) {
+    throw new ApiError(500, 'User not found');
+  }
+
   // first create the access token using the refresh token from x apis
   // then save the new access token & refresh token to the database, the use the new access token to post the tweet
 
@@ -235,10 +247,13 @@ export async function postTweet(botId: string, content: string) {
   console.log('Tweet posted successfully, status:', response.status);
 
   if (response.status !== 201) {
-    console.error('Failed to post tweet:', response.data);
+    console.error('Failed to post tweet:', response.data.data);
     throw new ApiError(500, 'Failed to post tweet');
   }
-  console.log('Tweet response:', response.data);
+  console.log('Tweet response:', response.data.data);
+  
+    // append tweet url to the tweet data
+  response.data.url = `https://twitter.com/${user.twitter_username}/status/${response.data.data.id}`;
 
   // enter this tweet into the database as well
   const { data: tweetData, error: tweetError } = await supabase
@@ -250,7 +265,8 @@ export async function postTweet(botId: string, content: string) {
       schedule_time: new Date(),
       status: 'SENT',
       github_contribution: 0,
-      leetcode_contribution: 0
+      leetcode_contribution: 0,
+      tweet_url: response.data.url
     })
     .select()
     .single();

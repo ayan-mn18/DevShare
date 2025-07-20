@@ -1,0 +1,109 @@
+<!-- services/email/templates/reminderEmail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Reminder - DevShare</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #15202B;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #FFFFFF;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background-color: #192734;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+        .header {
+            background: linear-gradient(135deg, #FFAD1F 0%, #FF8C00 100%);
+            padding: 35px;
+            text-align: center;
+        }
+        .header h2 {
+            margin: 0;
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .content {
+            padding: 40px 35px;
+            text-align: center;
+        }
+        .reminder-icon {
+            font-size: 56px;
+            margin-bottom: 25px;
+        }
+        h3 {
+            color: #FFFFFF;
+            margin: 0 0 20px 0;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        p {
+            color: #8899A6;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1DA1F2 0%, #0B7EC8 100%);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 6px 20px rgba(29, 161, 242, 0.3);
+            margin: 25px 0;
+            transition: all 0.2s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(29, 161, 242, 0.4);
+        }
+        .footer-text {
+            color: #657786;
+            font-size: 14px;
+            margin-top: 35px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>⏰ Challenge Reminder</h2>
+        </div>
+        <div class="content">
+            <div class="reminder-icon">🎯</div>
+            <h3>Don't Break Your Streak!</h3>
+            <p>
+                Just a friendly reminder to complete today's challenge requirements. 
+                Your consistency is what sets you apart! 💪
+            </p>
+            <a href="https://devshare.ayanmn18.live/dashboard" class="cta-button">
+                Check Progress
+            </a>
+            <p class="footer-text">
+                Keep grinding! 🚀<br>
+                - The DevShare Team
+            </p>
+        </div>
+    </div>
+</body>
+</html>
