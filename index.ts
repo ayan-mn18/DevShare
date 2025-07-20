@@ -19,6 +19,7 @@ import { generateTweetContent } from './services/scheduler';
 import { getLeetCodeMetrics } from './services/leetcode';
 import { postTweet } from './services/twitter';
 import { sendChallengeFailureEmail, sendMarketingEmail, sendWelcomeSeriesEmail } from './services/email';
+import { supabase } from './lib/supabase';
 
 config();
 
@@ -189,6 +190,58 @@ app.post('/api/v1/mail', async (req, res) => {
     res.status(500).json({
       status: 'ERROR',
       message: error.message,
+      data: null
+    });
+  }
+});
+
+// api for getting landing page data
+// More efficient version using joins
+app.get('/api/v1/landing', async (req, res) => {
+  try {
+    // Get counts in parallel
+    const [
+      { count: userCount, error: userCountError },
+      { count: tweetCount, error: tweetCountError },
+      { data: latestTweetData, error: latestTweetError }
+    ] = await Promise.all([
+      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('tweets').select('*', { count: 'exact', head: true }),
+      supabase
+        .from('tweets')
+        .select(`
+          *,
+          bots (
+            *,
+            users (*)
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+    ]);
+
+    // Handle errors
+    if (userCountError) throw new Error('Failed to fetch user count');
+    if (tweetCountError) throw new Error('Failed to fetch tweet count');
+    if (latestTweetError) throw new Error('Failed to fetch latest tweet');
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Landing page data fetched successfully',
+      data: {
+        userCount: userCount || 0,
+        tweetCount: tweetCount || 0,
+        latestTweet: latestTweetData,
+        user: latestTweetData?.bots?.users || null,
+        bot: latestTweetData?.bots || null
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching landing page data:', error);
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Failed to fetch landing page data',
       data: null
     });
   }
