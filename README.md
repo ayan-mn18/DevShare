@@ -102,7 +102,7 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## 🙋‍♂️ Questions?
 
-Open an issue or reach out on [Twitter](https://x.com/AyanMn18).
+Open an issue or reach out on [Twitter](https://x.com/DevShare18).
 
 ---
 
