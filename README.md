@@ -1,4 +1,4 @@
-![DevShare Banner](./screenshots/banner.png)
+![DevShare Banner](https://uiwkjvslz0.ufs.sh/f/7LCulCrlhcN51UBYdoQd4OFGKLEiZJDIHbNBRYunWh0qMgcf)
 
 **DevShare** is an automated developer accountability platform that tracks your daily coding progress across GitHub, LeetCode, and other platforms. It keeps you consistent with gentle reminders and celebrates your wins by auto-tweeting your achievements. Miss a day? DevShare holds you accountable with a public tweet—helping you build habits, a public portfolio, and your developer brand.
 
@@ -30,25 +30,19 @@
 
 ### Landing Page
 
-![Landing Page](./screenshots/landing.png)
+![Landing Page](https://uiwkjvslz0.ufs.sh/f/7LCulCrlhcN5VdZ7Wg4KMg5lFbSQuifYaGT04ze6AwCq3Ipv)
 
 ---
 
 ### Connect Your Accounts
 
-![Connect Accounts](./screenshots/connect.png)
-
----
-
-### Dashboard & Progress
-
-![Dashboard](./screenshots/dashboard.png)
+![Connect Accounts](https://uiwkjvslz0.ufs.sh/f/7LCulCrlhcN5IIvxmxhZBfHxEkur3b0SsUgwYDNoOA8Tq7We)
 
 ---
 
 ### Automated Tweet Example
 
-![Automated Tweet](./screenshots/tweet.png)
+![Automated Tweet](https://uiwkjvslz0.ufs.sh/f/7LCulCrlhcN5ro2myHxAKjNhCW0e5oqOGxmlDc4a1buBsifp)
 
 ---
 
@@ -103,12 +97,6 @@
 ## 🤝 Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-## 📄 License
-
-[MIT](./LICENSE)
 
 ---
 
