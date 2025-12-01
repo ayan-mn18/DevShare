@@ -37,12 +37,25 @@ jobs:
 
     - run: npm run build
 
-    - name: Start or Restart PM2 Process
+    - name: Start or Restart PM2 + Redis
       run: |
         if pm2 describe DevShare > /dev/null; then
           echo "DevShare is running → restarting..."
           pm2 restart DevShare
         else
-          echo "DevShare not found → starting new instance..."
+          echo "DevShare not found → starting Redis + new PM2 instance..."
+
+          # Start Redis container if not running
+          if ! docker ps --format '{{.Names}}' | grep -q "^redis$"; then
+            echo "Starting Redis container..."
+            docker run -d \
+              --name redis \
+              -p 6379:6379 \
+              redis:latest
+          else
+            echo "Redis is already running."
+          fi
+
+          # Start DevShare instance
           pm2 start dist/index.js --name DevShare
         fi
