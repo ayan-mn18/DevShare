@@ -17,19 +17,32 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+
     - run: npm ci
     - run: npm i -g pm2
-    - run: | 
-          touch .env
-          echo "${{ secrets.DEVSHARE_PROD }}" > .env
+
+    - name: Create .env
+      run: |
+        touch .env
+        echo "${{ secrets.DEVSHARE_PROD }}" > .env
+
     - run: npm run build
-    - run: pm2 restart DevShare
+
+    - name: Start or Restart PM2 Process
+      run: |
+        if pm2 describe DevShare > /dev/null; then
+          echo "DevShare is running → restarting..."
+          pm2 restart DevShare
+        else
+          echo "DevShare not found → starting new instance..."
+          pm2 start dist/index.js --name DevShare
+        fi
