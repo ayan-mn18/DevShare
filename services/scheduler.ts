@@ -224,12 +224,12 @@ export async function generateTweetContent(
   const prompt = getDailyUpdateUserPrompt(facts, tone, hashtags);
 
   const response = await openai.chat.completions.create({
-    model: "gpt-5-mini", // or gpt-3.5-turbo
+    model: "gpt-5.1", // or gpt-3.5-turbo
     messages: [
       { role: "system", content: DAILY_UPDATE_SYSTEM_PROMPT },
       { role: "user", content: prompt }
     ],
-    max_completion_tokens: 120,
+    max_completion_tokens: 300,
   });
 
   const rawTweet = response.choices[0].message.content?.trim() || "";
@@ -422,7 +422,7 @@ export async function generateChallengeAwareTweetContent(data: {
       { role: "system", content: CHALLENGE_UPDATE_SYSTEM_PROMPT },
       { role: "user", content: prompt }
     ],
-    max_completion_tokens: 120,
+    max_completion_tokens: 300,
   });
 
   const rawTweet = response.choices[0].message.content?.trim() || "";
@@ -447,7 +447,7 @@ export async function generateChallengeFailureTweet(data: {
       { role: "system", content: CHALLENGE_FAILURE_SYSTEM_PROMPT },
       { role: "user", content: userPrompt }
     ],
-    max_completion_tokens: 100, // Shorter since tweets are limited
+    max_completion_tokens: 300, // Shorter since tweets are limited
     presence_penalty: 0.3, // Encourage variety in expression
     frequency_penalty: 0.2 // Reduce repetitive phrases
   });
