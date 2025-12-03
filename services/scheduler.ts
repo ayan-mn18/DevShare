@@ -8,6 +8,9 @@ import { get } from 'http';
 import { challengeQueue, ChallengeTweetJobData } from '../lib/queue';
 import { boolean } from 'zod';
 import { sendChallengeFailureEmail } from './email';
+import { DAILY_UPDATE_SYSTEM_PROMPT, getDailyUpdateUserPrompt } from './prompts/dailyUpdate';
+import { CHALLENGE_UPDATE_SYSTEM_PROMPT, getChallengeUpdateUserPrompt } from './prompts/challengeUpdate';
+import { CHALLENGE_FAILURE_SYSTEM_PROMPT, getChallengeFailureUserPrompt } from './prompts/challengeFailure';
 
 interface TweetJobData {
   userId: string;
@@ -218,35 +221,15 @@ export async function generateTweetContent(
   const tone = tones[Math.floor(Math.random() * tones.length)];
   const hashtags = getRandomSubset(hashtagsPool, Math.floor(Math.random() * 4) + 2).join(" ");
 
-  const prompt = `
-You are a developer sharing your coding progress on Twitter in a way that grabs attention, entertains, or inspires.
-
-Facts:
-${facts.map((f) => `- ${f}`).join('\n')}
-
-Instructions:
-- Write a tweet under 280 characters
-- Style: ${tone}
-- Make it original and interesting, not generic or templated
-- Use emojis naturally if needed
-- Include these hashtags at the end: ${hashtags}
-- Try humor, analogies, drama, poetic flair, developer memes, or pro tips — based on the tone
-
-Examples:
-- "Only 2 commits today but they were spicy 🌶️🔥 Cleaned up legacy code that looked like ancient hieroglyphs. #buildinpublic #CleanCode #devlife"
-- "Leetcode hit me with 4 medium problems. I hit back with ACs. It’s a war out here 💣🧠 #leetcode #programming #shipit"
-- "No commits today, but I refactored my mindset. Growth doesn’t always mean output 🚀 #100DaysOfCode #developer #lateNightThoughts"
-- "Code didn't compile. Cried a little. Fixed a semicolon. I'm back baby 😤💻 #devmemes #javascript #debugging"
-`;
+  const prompt = getDailyUpdateUserPrompt(facts, tone, hashtags);
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4", // or gpt-3.5-turbo
+    model: "gpt-5-mini", // or gpt-3.5-turbo
     messages: [
-      { role: "system", content: "You are a creative tweet generator for a quirky developer sharing daily progress." },
+      { role: "system", content: DAILY_UPDATE_SYSTEM_PROMPT },
       { role: "user", content: prompt }
     ],
-    temperature: 0.95,
-    max_tokens: 120,
+    max_completion_tokens: 120,
   });
 
   const rawTweet = response.choices[0].message.content?.trim() || "";
@@ -431,34 +414,15 @@ export async function generateChallengeAwareTweetContent(data: {
 
   const tone = tones[Math.floor(Math.random() * tones.length)];
 
-  const prompt = `
-You are a developer sharing your coding challenge progress on Twitter. You're committed to consistency and growth.
-
-Facts:
-${facts.map((f) => `- ${f}`).join('\n')}
-
-Instructions:
-- Write a tweet under 280 characters
-- Style: ${tone}
-- Show progress, commitment, and accountability
-- Include these hashtags at the end: ${allHashtags}
-- Make it inspiring for others following similar challenges
-- Show the daily grind and consistency
-
-Examples:
-- "Day 23/100 of #100DaysOfLeetCode ✅ Crushed 'Two Sum' and 'Valid Parentheses' today. The consistency is building momentum! 🚀 #leetcode #challenge #DevShare"
-- "Daily grind complete! 💪 2 LeetCode problems + 3 GitHub commits. Small steps, big dreams 🎯 #100DaysOfCode #buildinpublic #DevShare"
-- "Day 45/100 and still going strong! 🔥 Today's solve: 'Merge Intervals' (Medium). Each problem makes me sharper 🧠 #100DaysOfLeetCode #challenge #DevShare"
-`;
+  const prompt = getChallengeUpdateUserPrompt(facts, tone, allHashtags, dayNumber, challengeTitle);
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-5-mini",
     messages: [
-      { role: "system", content: "You are a creative tweet generator for a developer documenting their coding challenge journey." },
+      { role: "system", content: CHALLENGE_UPDATE_SYSTEM_PROMPT },
       { role: "user", content: prompt }
     ],
-    temperature: 0.8,
-    max_tokens: 120,
+    max_completion_tokens: 120,
   });
 
   const rawTweet = response.choices[0].message.content?.trim() || "";
@@ -475,92 +439,15 @@ export async function generateChallengeFailureTweet(data: {
 }): Promise<string> {
   const { challengeTitle, dayNumber, challengeType, isStrict } = data;
 
-  const systemPrompt = `You are DevShare's AI tweet generator specializing in challenge failure announcements. DevShare is a platform that helps developers showcase their coding journey through automated social media posts.
-
-BRAND VOICE & TONE:
-- Authentic and honest - we don't sugarcoat failures
-- Supportive yet accountable - failure is part of growth
-- Motivational but realistic - emphasize comeback potential
-- Community-focused - others can learn from this
-- Professional but human - vulnerability builds connection
-- Action-oriented - focus on what's next, not dwelling on failure
-
-CONTEXT:
-- This is a public accountability system
-- The user enrolled in a strict challenge knowing the consequences
-- Failure tweets serve as both accountability and motivation for others
-- The community expects transparency and authenticity
-- This isn't punishment - it's part of the growth journey
-
-TARGET AUDIENCE:
-- Fellow developers following similar challenges
-- People considering joining DevShare challenges
-- The user's professional network and coding community
-- Potential employers who value consistency and accountability
-
-PSYCHOLOGICAL APPROACH:
-- Normalize failure as part of the learning process
-- Create urgency for getting back on track
-- Build empathy while maintaining accountability
-- Inspire others to stay consistent by showing consequences
-- Frame failure as temporary, not permanent
-
-CONTENT STRATEGY:
-- Use specific day numbers to show progress made before failure
-- Acknowledge the challenge difficulty respectfully
-- Include hope and comeback potential
-- Reference the community and support system
-- Maintain the user's dignity while being transparent`;
-
-  const userPrompt = `Generate a challenge failure tweet for:
-
-Challenge: ${challengeTitle}
-Day Failed: ${dayNumber}
-Challenge Type: ${challengeType}
-Strict Mode: ${isStrict ? 'Yes - Auto-fail on miss' : 'No - Warning system'}
-
-STRICT REQUIREMENTS:
-- Must be under 280 characters
-- Include day number and total challenge days
-- Use appropriate hashtags: #100DaysOfLeetCode #challenge #DevShare #accountability
-- Tone should be honest but not overly negative
-- Include a comeback/restart message
-- Use emojis strategically (not excessively)
-- Make it relatable to other developers
-- Show vulnerability but maintain professionalism
-
-CONTENT ELEMENTS TO INCLUDE:
-1. Clear acknowledgment of failure
-2. Specific day number context
-3. Take responsibility (no excuses)
-4. Mention the comeback/restart possibility
-5. Community accountability aspect
-6. Learning/growth mindset
-
-AVOID:
-- Making excuses or blaming external factors
-- Being overly dramatic or self-pitying
-- Shaming or negative self-talk
-- Generic motivational quotes
-- Hiding from the failure
-
-EXAMPLES OF GOOD FAILURE TWEETS:
-- "Day 23/100 of #100DaysOfLeetCode - missed today's problem and the streak is broken 💔 The accountability is real! Time to restart and come back stronger. Consistency is hard but that's what makes it valuable 💪 #challenge #DevShare #accountability"
-
-- "Failed my #100DaysOfLeetCode challenge on day 47/100 😤 No excuses - I didn't prioritize it today. The public accountability stings but it's exactly what I needed. Restarting tomorrow because growth happens in the restart, not the perfection 🚀 #challenge #DevShare"
-
-- "Streak broken at day 34/100 💀 #100DaysOfLeetCode challenge failed but not forgotten. The system works - when you slip, you own it publicly. Already planning my comeback strategy. Sometimes falling is the best lesson in flying 🎯 #accountability #DevShare #challenge"
-
-Generate a failure tweet that balances accountability with hope, maintains the user's dignity while being transparent, and motivates both the user and the community watching.`;
+  const userPrompt = getChallengeFailureUserPrompt(challengeTitle, dayNumber, challengeType, isStrict);
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-5-mini",
     messages: [
-      { role: "system", content: systemPrompt },
+      { role: "system", content: CHALLENGE_FAILURE_SYSTEM_PROMPT },
       { role: "user", content: userPrompt }
     ],
-    temperature: 0.7, // Lower temperature for more consistent, appropriate responses
-    max_tokens: 100, // Shorter since tweets are limited
+    max_completion_tokens: 100, // Shorter since tweets are limited
     presence_penalty: 0.3, // Encourage variety in expression
     frequency_penalty: 0.2 // Reduce repetitive phrases
   });

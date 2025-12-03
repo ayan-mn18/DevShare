@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { postTweet } from '../services/twitter';
 import type { ApiResponse, Tweet } from '../types/api';
 import { addJob, tweetQueue } from '../lib/queue';
+import { generateTweetContent, generateChallengeAwareTweetContent, generateChallengeFailureTweet } from '../services/scheduler';
 
 const router = Router();
 
@@ -395,6 +396,65 @@ router.post('/update-schedule', async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating schedule:', error);
+    return res.status(500).json({
+      status: 'ERROR',
+      message: 'An unexpected error occurred',
+      data: null
+    });
+  }
+});
+
+router.post('/generate-sample', async (req, res) => {
+  try {
+    const schema = z.object({
+      type: z.enum(['daily', 'challenge', 'failure']),
+      data: z.any()
+    });
+
+    const parseResult = schema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({
+        status: 'ERROR',
+        message: 'Invalid request parameters',
+        data: parseResult.error.format()
+      });
+    }
+
+    const { type, data } = parseResult.data;
+    let tweetContent = '';
+
+    if (type === 'daily') {
+      // Mock metrics structure if not provided
+      const githubMetrics = data.githubMetrics || { contributions: [{ count: 5 }] };
+      const leetcodeMetrics = data.leetcodeMetrics || { 
+        recentSubmissions: [{ title: 'Two Sum', difficulty: 'Easy', timestamp: new Date().toISOString() }],
+        streak: 10 
+      };
+      tweetContent = await generateTweetContent(githubMetrics, leetcodeMetrics);
+    } else if (type === 'challenge') {
+      tweetContent = await generateChallengeAwareTweetContent({
+        challengeTitle: data.challengeTitle || '100_days_leetcode',
+        dayNumber: data.dayNumber || 1,
+        leetcodeQuestions: data.leetcodeQuestions || [],
+        githubCommits: data.githubCommits || 0,
+        challengeFailed: data.challengeFailed || false
+      });
+    } else if (type === 'failure') {
+      tweetContent = await generateChallengeFailureTweet({
+        challengeTitle: data.challengeTitle || '100 Days of LeetCode',
+        dayNumber: data.dayNumber || 10,
+        challengeType: data.challengeType || '100_days_leetcode',
+        isStrict: data.isStrict ?? true
+      });
+    }
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Sample tweet generated',
+      data: { tweet: tweetContent }
+    });
+  } catch (error) {
+    console.error('Error generating sample tweet:', error);
     return res.status(500).json({
       status: 'ERROR',
       message: 'An unexpected error occurred',
